@@ -1,17 +1,15 @@
 package com.example.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.data.local.MovieDAO
 import com.example.data.local.PopularMoviesCacheDao
 import com.example.data.local.DiscoverPageCacheDao
 import com.example.data.local.movieEntityToMovieLocal
+import com.example.data.local.toDiscoverPageCacheItem
 import com.example.data.local.toPopularMovieCache
 import com.example.data.network.MoviesWebServices
-import com.example.data.network.dto.MovieDto
 import com.example.data.network.utils.NetworkUtils
-import com.example.data.paging.DateRangePagingSource
+import com.example.data.paging.BasePagingSource
 import com.example.domain.model.Cast
 import com.example.domain.model.Movie
 import com.example.domain.model.MovieDetails
@@ -59,26 +57,23 @@ class MoviesRepositoryImpl @Inject constructor(
         startDate: String,
         endDate: String
     ): Flow<PagingData<Movie>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 20,
-                prefetchDistance = 2,
-                enablePlaceholders = false,
-                initialLoadSize = 20
-            ),
-            pagingSourceFactory = {
-                DateRangePagingSource(
+        return BasePagingSource.createPager(
+            pageSize = 20,
+            prefetchDistance = 2,
+            provider = { page ->
+                api.discoverMoviesByDateRange(
                     startDate = startDate,
                     endDate = endDate,
-                    api = { page ->
-                        api.discoverMoviesByDateRange(
-                            startDate = startDate,
-                            endDate = endDate,
-                            page = page
-                        )
-                    },
-                    mapper = { it: MovieDto -> it.toMovie() },
-                    discoverPageCacheDao = discoverPageCacheDao
+                    page = page
+                )
+            },
+            mapper = { it.toMovie() },
+            cacheReader = { page ->
+                discoverPageCacheDao.getPage(startDate, endDate, page).map { it.toMovie() }
+            },
+            cacheWriter = { movies, page ->
+                discoverPageCacheDao.insertPage(
+                    movies.map { it.toDiscoverPageCacheItem(startDate, endDate, page) }
                 )
             }
         ).flow

@@ -5,20 +5,15 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.data.network.dto.BaseResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-class BasePagingSource<T : Any, DTO : Any> : PagingSource<Int, T>() {
-
-    private lateinit var provider: suspend (Int) -> BaseResponse<List<DTO>>
-    private lateinit var mapper: (DTO) -> T
-
-    fun setProvider(
-        provider: suspend (Int) -> BaseResponse<List<DTO>>,
-        mapper: (DTO) -> T
-    ): BasePagingSource<T, DTO> {
-        this.provider = provider
-        this.mapper = mapper
-        return this
-    }
+class BasePagingSource<T : Any, DTO : Any>(
+    private val provider: suspend (Int) -> BaseResponse<List<DTO>>,
+    private val mapper: (DTO) -> T,
+    private val cacheReader: (suspend (Int) -> List<T>)? = null,
+    private val cacheWriter: (suspend (List<T>, Int) -> Unit)? = null
+) : PagingSource<Int, T>() {
 
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -28,27 +23,28 @@ class BasePagingSource<T : Any, DTO : Any> : PagingSource<Int, T>() {
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
-        return try {
-            val page = params.key ?: 1
-            val response = provider(page)
-            val list = response.results
-            val totalPages = response.totalPages
-            val hasMore = list.isEmpty().not() && page < totalPages && page < 500
-            val nextKey = if (hasMore) page + 1 else null
+        val page = params.key ?: 1
+        val cached = cacheReader?.let {
+            withContext(Dispatchers.IO) { it(page) }
+        } ?: emptyList()
 
-            if (list.isNotEmpty()) {
-                LoadResult.Page(
-                    data = list.map { mapper(it) },
-                    prevKey = if (page == 1) null else page - 1,
-                    nextKey = nextKey
-                )
-            } else {
-                LoadResult.Page(
-                    data = emptyList(),
-                    prevKey = null,
-                    nextKey = null
-                )
+        return try {
+            val response = provider(page)
+            val dtos = response.results
+            val totalPages = response.totalPages
+            val hasMore = dtos.isNotEmpty() && page < totalPages && page < 500
+            val nextKey = if (hasMore) page + 1 else null
+            val items = dtos.map { mapper(it) }
+
+            cacheWriter?.let {
+                withContext(Dispatchers.IO) { it(items, page) }
             }
+
+            LoadResult.Page(
+                data = items,
+                prevKey = if (page == 1) null else page - 1,
+                nextKey = nextKey
+            )
         } catch (e: Exception) {
             when (e) {
                 is IndexOutOfBoundsException -> LoadResult.Page(
@@ -56,23 +52,44 @@ class BasePagingSource<T : Any, DTO : Any> : PagingSource<Int, T>() {
                     prevKey = null,
                     nextKey = null
                 )
-                else -> LoadResult.Error(e)
+                else -> if (cached.isNotEmpty()) {
+                    LoadResult.Page(
+                        data = cached,
+                        prevKey = if (page == 1) null else page - 1,
+                        nextKey = page + 1
+                    )
+                } else {
+                    LoadResult.Error(e)
+                }
             }
         }
     }
 
-    fun toPager(pageSize: Int = 20): Pager<Int, T> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = pageSize,
-                prefetchDistance = 1,
-                enablePlaceholders = true,
-                maxSize = PagingConfig.MAX_SIZE_UNBOUNDED,
-                initialLoadSize = pageSize
-            ),
-            pagingSourceFactory = {
-                BasePagingSource<T, DTO>().setProvider(provider, mapper)
-            }
-        )
+    companion object {
+        fun <T : Any, DTO : Any> createPager(
+            pageSize: Int = 20,
+            prefetchDistance: Int = 1,
+            provider: suspend (Int) -> BaseResponse<List<DTO>>,
+            mapper: (DTO) -> T,
+            cacheReader: (suspend (Int) -> List<T>)? = null,
+            cacheWriter: (suspend (List<T>, Int) -> Unit)? = null
+        ): Pager<Int, T> {
+            return Pager(
+                config = PagingConfig(
+                    pageSize = pageSize,
+                    prefetchDistance = prefetchDistance,
+                    enablePlaceholders = false,
+                    initialLoadSize = pageSize
+                ),
+                pagingSourceFactory = {
+                    BasePagingSource(
+                        provider = provider,
+                        mapper = mapper,
+                        cacheReader = cacheReader,
+                        cacheWriter = cacheWriter
+                    )
+                }
+            )
+        }
     }
 }
