@@ -1,0 +1,5 @@
+package com.example.data.utils
+
+object Constants {
+    const val API_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIzZDFjYzMxN2NiNTE2NTFiNDdkNzVjY2QxNzY2MTNlMyIsIm5iZiI6MTc3MTg0NTM3OC45NzcsInN1YiI6IjY5OWMzNzAyZGVhM2UwMjkyOTgwZjcwOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.NzIA4rjVVts5IRfMpAsCswc-ZfeRE15TwHJrLFz_rY8"
+}

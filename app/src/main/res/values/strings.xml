@@ -1,0 +1,48 @@
+<resources>
+    <string name="app_name">MovieApp</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_watchlist">Watchlist</string>
+    <string name="nav_movie_details">Movie Details</string>
+
+    <!-- Home -->
+    <string name="popular_movies">Popular Movies</string>
+    <string name="no_popular_movies">No popular movies available</string>
+    <string name="error_loading">Error loading</string>
+    <string name="retry">Retry</string>
+    <string name="no_movies_found">No movies found</string>
+    <string name="movies_2024">2024 Movies</string>
+
+    <!-- Movie details -->
+    <string name="movie_details_title">Movie Details</string>
+    <string name="back">Back</string>
+    <string name="remove_from_watchlist">Remove from watchlist</string>
+    <string name="add_to_watchlist">Add to watchlist</string>
+
+    <!-- Watchlist -->
+    <string name="watchlist_title">Watchlist</string>
+    <string name="watchlist_empty_title">Your watchlist is empty</string>
+    <string name="watchlist_empty_subtitle">Add movies from Home to watch later</string>
+    <string name="error_format">Error: %1$s</string>
+
+    <!-- Sections -->
+    <string name="similar_movies">Similar Movies</string>
+    <string name="no_similar_movies_found">No similar movies found</string>
+    <string name="cast">Cast</string>
+    <string name="no_cast_available">No cast information available</string>
+    <string name="overview">Overview</string>
+    <string name="rating">Rating</string>
+
+    <!-- Format strings -->
+    <string name="year_bullet">• %1$s</string>
+    <string name="runtime_min"> • %1$s min</string>
+    <string name="tagline_quoted">\"%1$s\"</string>
+
+    <!-- Errors -->
+    <string name="error_movie_details">Failed to load movie details</string>
+    <string name="error_cast">Failed to load cast</string>
+    <string name="error_similar_movies">Failed to load similar movies</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+    <string name="error_connection">Unable to connect to the server. Please check your internet connection and try again.</string>
+</resources>
