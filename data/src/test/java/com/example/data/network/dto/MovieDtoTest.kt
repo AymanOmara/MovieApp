@@ -1,7 +1,8 @@
 package com.example.data.network.dto
 
-import com.example.domain.model.Movie
+import com.example.data.utils.Constants
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MovieDtoTest {
@@ -21,7 +22,8 @@ class MovieDtoTest {
         val movie = dto.toMovie()
         assertEquals(1, movie.id)
         assertEquals("Title", movie.title)
-        assertEquals("/poster.jpg", movie.posterPath)
+        assertTrue(movie.posterUrl.endsWith("poster.jpg"))
+        assertTrue(movie.posterUrl.startsWith(Constants.IMAGE_BASE_URL))
         assertEquals("Overview", movie.overview)
         assertEquals("2024-01-01", movie.releaseDate)
         assertEquals(8.5, movie.voteAverage, 0.0)
@@ -43,7 +45,7 @@ class MovieDtoTest {
         val movie = dto.toMovie()
         assertEquals(2, movie.id)
         assertEquals("", movie.title)
-        assertEquals("", movie.posterPath)
+        assertEquals("", movie.posterUrl)
         assertEquals("", movie.overview)
         assertEquals("", movie.releaseDate)
         assertEquals(0.0, movie.voteAverage, 0.0)

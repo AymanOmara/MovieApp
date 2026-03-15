@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.domain.model.Cast
-import com.example.domain.model.Movie
-import com.example.domain.model.MovieDetails
+import com.example.domain.entity.Cast
+import com.example.domain.entity.Movie
+import com.example.domain.entity.MovieDetails
 import com.example.movieapp.presentation.details.viewmodel.MovieDetailsEvent
 import com.example.movieapp.presentation.details.viewmodel.MovieDetailsUiState
 import com.example.movieapp.presentation.details.viewmodel.MovieDetailsViewModel
@@ -17,7 +17,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 fun MovieDetailsScreen(
     movie: Movie,
     onBackClick: () -> Unit,
-    onMovieClick: (Movie) -> Unit,
     viewModel: MovieDetailsViewModel = hiltViewModel<MovieDetailsViewModel, MovieDetailsViewModel.Factory>(
         key = "movie_details_${movie.id}",
         creationCallback = { factory -> factory.create(movie) }
@@ -28,7 +27,6 @@ fun MovieDetailsScreen(
     MovieDetailsContent(
         uiState = uiState,
         onBackClick = onBackClick,
-        onMovieClick = onMovieClick,
         onRetryDetails = { viewModel.onEvent(MovieDetailsEvent.RetryDetails) },
         onRetryCast = { viewModel.onEvent(MovieDetailsEvent.RetryCast) },
         onRetrySimilar = { viewModel.onEvent(MovieDetailsEvent.RetrySimilar) },
@@ -50,7 +48,6 @@ private fun MovieDetailsScreenPreview() {
                 isSimilarLoading = false
             ),
             onBackClick = {},
-            onMovieClick = {},
             onRetryDetails = {},
             onRetryCast = {},
             onRetrySimilar = {},

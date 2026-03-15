@@ -1,8 +1,7 @@
 package com.example.data.local
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 
 @Entity(tableName = "discover_page_cache", primaryKeys = ["startDate", "endDate", "page", "id"])
 data class DiscoverPageCacheItem(
@@ -11,7 +10,7 @@ data class DiscoverPageCacheItem(
     val page: Int,
     val id: Int,
     val title: String,
-    val posterPath: String,
+    val posterUrl: String,
     val overview: String,
     val releaseDate: String,
     val voteAverage: Double,
@@ -20,7 +19,7 @@ data class DiscoverPageCacheItem(
     fun toMovie() = Movie(
         id = id,
         title = title,
-        posterPath = posterPath,
+        posterUrl = posterUrl,
         overview = overview,
         releaseDate = releaseDate,
         voteAverage = voteAverage,
@@ -35,7 +34,7 @@ fun Movie.toDiscoverPageCacheItem(startDate: String, endDate: String, page: Int)
         page = page,
         id = id,
         title = title,
-        posterPath = posterPath,
+        posterUrl = posterUrl,
         overview = overview,
         releaseDate = releaseDate,
         voteAverage = voteAverage,

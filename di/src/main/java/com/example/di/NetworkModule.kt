@@ -2,7 +2,7 @@ package com.example.di
 
 import com.example.data.network.MoviesWebServices
 import com.example.data.network.interceptors.HeaderInterceptor
-import com.example.domain.utils.Constants
+import com.example.data.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

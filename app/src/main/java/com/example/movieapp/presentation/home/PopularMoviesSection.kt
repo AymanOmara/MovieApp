@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 import com.example.movieapp.R
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.movieapp.ui.theme.MovieAppTheme
@@ -69,18 +69,6 @@ private fun PopularMoviesSectionPreview() {
         PopularMoviesSection(
             movies = Movie.previewList(),
             isLoading = false,
-            onMovieClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PopularMoviesSectionLoadingPreview() {
-    MovieAppTheme {
-        PopularMoviesSection(
-            movies = emptyList(),
-            isLoading = true,
             onMovieClick = {}
         )
     }

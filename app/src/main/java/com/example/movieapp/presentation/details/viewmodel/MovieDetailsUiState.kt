@@ -1,8 +1,8 @@
 package com.example.movieapp.presentation.details.viewmodel
 
-import com.example.domain.model.Cast
-import com.example.domain.model.Movie
-import com.example.domain.model.MovieDetails
+import com.example.domain.entity.Cast
+import com.example.domain.entity.Movie
+import com.example.domain.entity.MovieDetails
 
 data class MovieDetailsUiState(
     val movieDetails: MovieDetails? = null,

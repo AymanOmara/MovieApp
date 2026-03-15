@@ -2,7 +2,7 @@ package com.example.movieapp.presentation.watchlist.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 import com.example.domain.repository.MoviesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

@@ -1,8 +1,8 @@
 package com.example.movieapp.presentation.details.viewmodel
 
-import com.example.domain.model.Cast
-import com.example.domain.model.Movie
-import com.example.domain.model.MovieDetails
+import com.example.domain.entity.Cast
+import com.example.domain.entity.Movie
+import com.example.domain.entity.MovieDetails
 import com.example.domain.repository.MoviesRepository
 import com.example.domain.utils.Result
 import io.mockk.coEvery
@@ -16,7 +16,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

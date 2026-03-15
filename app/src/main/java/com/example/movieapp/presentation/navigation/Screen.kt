@@ -6,7 +6,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 import com.example.movieapp.R
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient

@@ -3,8 +3,8 @@ package com.example.movieapp.presentation.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.example.domain.model.Movie
-import com.example.domain.model.MonthRangeGenerator
+import com.example.domain.entity.Movie
+import com.example.domain.entity.MonthRangeGenerator
 import com.example.domain.repository.MoviesRepository
 import com.example.domain.utils.Result
 import com.example.movieapp.presentation.model.MonthPagingSection

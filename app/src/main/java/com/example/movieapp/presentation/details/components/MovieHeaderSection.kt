@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.MovieDetails
+import com.example.domain.entity.MovieDetails
 import com.example.movieapp.R
 import com.example.movieapp.ui.theme.MovieAppTheme
 

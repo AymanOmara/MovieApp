@@ -20,15 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import com.example.domain.model.Movie
-import com.example.domain.utils.Constants
+import com.example.domain.entity.Movie
 import com.example.movieapp.ui.theme.MovieAppTheme
 import com.example.movieapp.ui.theme.Primary
 
 @Composable
 fun SimilarMovieCard(
     movie: Movie,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -38,12 +36,11 @@ fun SimilarMovieCard(
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = Primary),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        onClick = onClick
     ) {
         Column {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(Constants.IMAGE_BASE_URL + movie.posterPath.trimStart('/'))
+                    .data(movie.posterUrl)
                     .build(),
                 contentDescription = movie.title,
                 modifier = Modifier
@@ -69,7 +66,6 @@ private fun SimilarMovieCardPreview() {
     MovieAppTheme {
         SimilarMovieCard(
             movie = Movie.preview(),
-            onClick = {}
         )
     }
 }

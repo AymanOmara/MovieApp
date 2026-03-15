@@ -1,6 +1,6 @@
 package com.example.data.network.dto
 
-import com.example.domain.model.Genre
+import com.example.domain.entity.Genre
 import com.google.gson.annotations.SerializedName
 
 data class GenreDto(

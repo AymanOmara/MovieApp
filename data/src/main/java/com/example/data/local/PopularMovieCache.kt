@@ -2,13 +2,13 @@ package com.example.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 
 @Entity(tableName = "popular_movies_cache")
 data class PopularMovieCache(
     @PrimaryKey val id: Int,
     val title: String,
-    val posterPath: String,
+    val posterUrl: String,
     val overview: String,
     val releaseDate: String,
     val voteAverage: Double,
@@ -17,7 +17,7 @@ data class PopularMovieCache(
     fun toMovie() = Movie(
         id = id,
         title = title,
-        posterPath = posterPath,
+        posterUrl = posterUrl,
         overview = overview,
         releaseDate = releaseDate,
         voteAverage = voteAverage,
@@ -28,7 +28,7 @@ data class PopularMovieCache(
 fun Movie.toPopularMovieCache(): PopularMovieCache = PopularMovieCache(
     id = id,
     title = title,
-    posterPath = posterPath,
+    posterUrl = posterUrl,
     overview = overview,
     releaseDate = releaseDate,
     voteAverage = voteAverage,

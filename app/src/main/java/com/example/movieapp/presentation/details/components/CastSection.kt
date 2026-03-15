@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.Cast
+import com.example.domain.entity.Cast
 import com.example.movieapp.R
 import com.example.movieapp.ui.theme.MovieAppTheme
 

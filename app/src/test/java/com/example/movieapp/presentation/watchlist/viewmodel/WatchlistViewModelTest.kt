@@ -1,6 +1,6 @@
 package com.example.movieapp.presentation.watchlist.viewmodel
 
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 import com.example.domain.repository.MoviesRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -11,8 +11,6 @@ import io.mockk.Runs
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before

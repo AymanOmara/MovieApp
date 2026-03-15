@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 import com.example.movieapp.R
 import com.example.movieapp.ui.theme.MovieAppTheme
 
@@ -26,7 +26,6 @@ fun SimilarMoviesSection(
     isLoading: Boolean,
     error: String?,
     onRetry: () -> Unit,
-    onMovieClick: (Movie) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -67,7 +66,6 @@ fun SimilarMoviesSection(
                     items(movies) { movie ->
                         SimilarMovieCard(
                             movie = movie,
-                            onClick = { onMovieClick(movie) }
                         )
                     }
                 }
@@ -85,7 +83,6 @@ private fun SimilarMoviesSectionLoadingPreview() {
             isLoading = true,
             error = null,
             onRetry = {},
-            onMovieClick = {}
         )
     }
 }
@@ -99,7 +96,6 @@ private fun SimilarMoviesSectionErrorPreview() {
             isLoading = false,
             error = stringResource(R.string.error_similar_movies),
             onRetry = {},
-            onMovieClick = {}
         )
     }
 }
@@ -113,7 +109,6 @@ private fun SimilarMoviesSectionEmptyPreview() {
             isLoading = false,
             error = null,
             onRetry = {},
-            onMovieClick = {}
         )
     }
 }
@@ -127,7 +122,6 @@ private fun SimilarMoviesSectionContentPreview() {
             isLoading = false,
             error = null,
             onRetry = {},
-            onMovieClick = {}
         )
     }
 }

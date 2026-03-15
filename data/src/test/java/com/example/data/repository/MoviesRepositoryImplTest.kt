@@ -7,7 +7,7 @@ import com.example.data.local.PopularMoviesCacheDao
 import com.example.data.network.MoviesWebServices
 import com.example.data.network.dto.BaseResponse
 import com.example.data.network.dto.MovieDto
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 import com.example.domain.utils.Result
 import io.mockk.coEvery
 import io.mockk.every

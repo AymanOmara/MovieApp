@@ -1,6 +1,6 @@
 package com.example.movieapp.presentation.home.viewmodel
 
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 import com.example.domain.repository.MoviesRepository
 import com.example.domain.utils.Result
 import io.mockk.every

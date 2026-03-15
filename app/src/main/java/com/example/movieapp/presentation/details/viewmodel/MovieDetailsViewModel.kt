@@ -2,7 +2,7 @@ package com.example.movieapp.presentation.details.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 import com.example.domain.repository.MoviesRepository
 import com.example.domain.utils.Result
 import dagger.assisted.Assisted

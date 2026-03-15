@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.domain.model.Cast
-import com.example.domain.model.Movie
-import com.example.domain.model.MovieDetails
+import com.example.domain.entity.Cast
+import com.example.domain.entity.Movie
+import com.example.domain.entity.MovieDetails
 import com.example.movieapp.R
 import com.example.movieapp.presentation.components.MovieTopAppBar
 import com.example.movieapp.presentation.details.components.CastSection
@@ -39,7 +39,6 @@ import com.example.movieapp.ui.theme.Primary
 fun MovieDetailsContent(
     uiState: MovieDetailsUiState,
     onBackClick: () -> Unit,
-    onMovieClick: (Movie) -> Unit,
     onRetryDetails: () -> Unit,
     onRetryCast: () -> Unit,
     onRetrySimilar: () -> Unit,
@@ -108,7 +107,6 @@ fun MovieDetailsContent(
                     isLoading = uiState.isSimilarLoading,
                     error = uiState.similarError,
                     onRetry = onRetrySimilar,
-                    onMovieClick = onMovieClick
                 )
             }
 
@@ -130,7 +128,6 @@ private fun MovieDetailsContentLoadingPreview() {
                 isSimilarLoading = true
             ),
             onBackClick = {},
-            onMovieClick = {},
             onRetryDetails = {},
             onRetryCast = {},
             onRetrySimilar = {},
@@ -153,7 +150,6 @@ private fun MovieDetailsContentContentPreview() {
                 isSimilarLoading = false
             ),
             onBackClick = {},
-            onMovieClick = {},
             onRetryDetails = {},
             onRetryCast = {},
             onRetrySimilar = {},
@@ -176,7 +172,6 @@ private fun MovieDetailsContentErrorPreview() {
                 similarError = stringResource(R.string.error_similar_movies)
             ),
             onBackClick = {},
-            onMovieClick = {},
             onRetryDetails = {},
             onRetryCast = {},
             onRetrySimilar = {},
@@ -199,7 +194,6 @@ private fun MovieDetailsContentPartialErrorPreview() {
                 similarMovies = Movie.previewList().take(1)
             ),
             onBackClick = {},
-            onMovieClick = {},
             onRetryDetails = {},
             onRetryCast = {},
             onRetrySimilar = {},

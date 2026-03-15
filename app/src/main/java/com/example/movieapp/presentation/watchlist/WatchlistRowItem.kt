@@ -37,8 +37,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import com.example.domain.model.Movie
-import com.example.domain.utils.Constants
+import com.example.domain.entity.Movie
 import com.example.movieapp.R
 import androidx.compose.material3.MaterialTheme
 import com.example.movieapp.ui.theme.MovieAppTheme
@@ -52,9 +51,6 @@ fun WatchlistRowItem(
     onRemoveFromWatchlist: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val posterUrl = movie.posterPath.let { path ->
-        Constants.IMAGE_BASE_URL + path.trimStart('/')
-    }
     val year = movie.releaseDate.takeIf { it.length >= 4 }?.take(4).orEmpty()
 
     Card(
@@ -73,7 +69,7 @@ fun WatchlistRowItem(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(posterUrl)
+                    .data(movie.posterUrl)
                     .crossfade(true)
                     .build(),
                 contentDescription = movie.title,

@@ -31,8 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.example.movieapp.R
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import com.example.domain.model.Movie
-import com.example.domain.utils.Constants
+import com.example.domain.entity.Movie
 import com.example.movieapp.ui.theme.Primary
 
 @Composable
@@ -43,9 +42,6 @@ fun MovieCard(
     showRemoveFromWatchlist: Boolean = false,
     onRemoveFromWatchlist: () -> Unit = {}
 ) {
-    val posterUrl = movie.posterPath.let { path ->
-        Constants.IMAGE_BASE_URL + path.trimStart('/')
-    }
     Card(
         modifier = modifier.width(140.dp).height(260.dp),
         shape = RoundedCornerShape(12.dp),
@@ -57,7 +53,7 @@ fun MovieCard(
             Column(modifier = Modifier.fillMaxSize()) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(posterUrl)
+                        .data(movie.posterUrl)
                         .build(),
                     contentDescription = movie.title,
                     modifier = Modifier

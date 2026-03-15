@@ -1,6 +1,6 @@
 package com.example.movieapp.presentation.watchlist.viewmodel
 
-import com.example.domain.model.Movie
+import com.example.domain.entity.Movie
 
 sealed interface WatchlistEvent {
     data object Refresh : WatchlistEvent

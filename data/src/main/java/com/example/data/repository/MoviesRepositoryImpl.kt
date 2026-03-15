@@ -10,9 +10,9 @@ import com.example.data.local.toPopularMovieCache
 import com.example.data.network.MoviesWebServices
 import com.example.data.network.utils.NetworkUtils
 import com.example.data.paging.BasePagingSource
-import com.example.domain.model.Cast
-import com.example.domain.model.Movie
-import com.example.domain.model.MovieDetails
+import com.example.domain.entity.Cast
+import com.example.domain.entity.Movie
+import com.example.domain.entity.MovieDetails
 import com.example.domain.repository.MoviesRepository
 import com.example.domain.utils.Result
 import kotlinx.coroutines.Dispatchers

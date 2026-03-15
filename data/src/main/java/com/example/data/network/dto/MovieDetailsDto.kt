@@ -1,6 +1,7 @@
 package com.example.data.network.dto
 
-import com.example.domain.model.MovieDetails
+import com.example.data.utils.Constants
+import com.example.domain.entity.MovieDetails
 import com.google.gson.annotations.SerializedName
 
 data class MovieDetailsDto(
@@ -22,8 +23,8 @@ data class MovieDetailsDto(
     fun toMovieDetails(): MovieDetails = MovieDetails(
         id = id,
         title = title ?: "",
-        posterPath = posterPath ?: "",
-        backdropPath = backdropPath ?: "",
+        posterUrl = posterPath?.let { Constants.IMAGE_BASE_URL + it.trimStart('/') } ?: "",
+        backdropUrl = backdropPath?.let { Constants.IMAGE_BASE_URL + it.trimStart('/') } ?: "",
         overview = overview ?: "",
         releaseDate = releaseDate ?: "",
         voteAverage = voteAverage ?: 0.0,

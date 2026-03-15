@@ -33,3 +33,11 @@ val MIGRATION_1_2 = object : Migration(1, 2) {
         """.trimIndent())
     }
 }
+
+val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE movies RENAME COLUMN posterPath TO posterUrl")
+        db.execSQL("ALTER TABLE popular_movies_cache RENAME COLUMN posterPath TO posterUrl")
+        db.execSQL("ALTER TABLE discover_page_cache RENAME COLUMN posterPath TO posterUrl")
+    }
+}

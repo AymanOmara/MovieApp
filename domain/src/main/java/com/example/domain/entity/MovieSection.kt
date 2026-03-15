@@ -1,4 +1,4 @@
-package com.example.domain.model
+package com.example.domain.entity
 
 data class MovieSection(
     val monthLabel: String,

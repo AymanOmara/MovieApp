@@ -3,7 +3,6 @@ package com.example.movieapp.presentation.details.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -24,8 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import com.example.domain.model.Cast
-import com.example.domain.utils.Constants
+import com.example.domain.entity.Cast
 import com.example.movieapp.ui.theme.MovieAppTheme
 
 @Composable
@@ -39,11 +37,7 @@ fun CastCard(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(
-                    if (cast.profilePath.isNotBlank())
-                        Constants.IMAGE_BASE_URL + cast.profilePath.trimStart('/')
-                    else null
-                )
+                .data(cast.profileUrl.ifBlank { null })
                 .build(),
             contentDescription = cast.name,
             modifier = Modifier

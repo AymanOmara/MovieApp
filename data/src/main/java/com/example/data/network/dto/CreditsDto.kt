@@ -1,6 +1,7 @@
 package com.example.data.network.dto
 
-import com.example.domain.model.Cast
+import com.example.data.utils.Constants
+import com.example.domain.entity.Cast
 import com.google.gson.annotations.SerializedName
 
 data class CreditsDto(
@@ -19,7 +20,7 @@ data class CastDto(
         id = id,
         name = name ?: "",
         character = character ?: "",
-        profilePath = profilePath ?: "",
+        profileUrl = profilePath?.let { Constants.IMAGE_BASE_URL + it.trimStart('/') } ?: "",
         order = order ?: 0
     )
 }

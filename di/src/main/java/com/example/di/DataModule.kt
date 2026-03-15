@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.data.local.AppDatabase
 import com.example.data.local.MIGRATION_1_2
+import com.example.data.local.MIGRATION_2_3
 import com.example.data.local.MovieDAO
 import com.example.data.local.PopularMoviesCacheDao
 import com.example.data.local.DiscoverPageCacheDao
@@ -33,7 +34,7 @@ object DataModule {
             context,
             AppDatabase::class.java,
             "movie_db"
-        ).addMigrations(MIGRATION_1_2).build()
+        ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
     }
 
     @Provides

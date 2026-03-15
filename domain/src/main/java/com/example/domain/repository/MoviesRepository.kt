@@ -1,9 +1,9 @@
 package com.example.domain.repository
 
 import androidx.paging.PagingData
-import com.example.domain.model.Cast
-import com.example.domain.model.Movie
-import com.example.domain.model.MovieDetails
+import com.example.domain.entity.Cast
+import com.example.domain.entity.Movie
+import com.example.domain.entity.MovieDetails
 import com.example.domain.utils.Result
 import kotlinx.coroutines.flow.Flow
 

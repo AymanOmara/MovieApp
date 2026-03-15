@@ -38,8 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.example.movieapp.R
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import com.example.domain.model.MovieDetails
-import com.example.domain.utils.Constants
+import com.example.domain.entity.MovieDetails
 import com.example.movieapp.ui.theme.MovieAppTheme
 import com.example.movieapp.ui.theme.Primary
 
@@ -56,7 +55,7 @@ fun MovieHeaderContent(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(Constants.IMAGE_BASE_URL + movieDetails.backdropPath.trimStart('/'))
+                    .data(movieDetails.backdropUrl)
                     .build(),
                 contentDescription = movieDetails.title,
                 modifier = Modifier.fillMaxSize(),
@@ -92,7 +91,7 @@ fun MovieHeaderContent(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(Constants.IMAGE_BASE_URL + movieDetails.posterPath.trimStart('/'))
+                            .data(movieDetails.posterUrl)
                             .build(),
                         contentDescription = movieDetails.title,
                         modifier = Modifier.fillMaxSize(),

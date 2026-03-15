@@ -38,9 +38,6 @@ fun MovieNavHost(
                 MovieDetailsScreen(
                     movie = screen.movie,
                     onBackClick = { backStack.removeLastOrNull() },
-                    onMovieClick = { movie ->
-                        backStack.add(Screen.MovieDetails(movie))
-                    }
                 )
             }
         }

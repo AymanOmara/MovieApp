@@ -1,10 +1,10 @@
-package com.example.domain.model
+package com.example.domain.entity
 
 data class MovieDetails(
     val id: Int,
     val title: String,
-    val posterPath: String,
-    val backdropPath: String,
+    val posterUrl: String,
+    val backdropUrl: String,
     val overview: String,
     val releaseDate: String,
     val voteAverage: Double,
@@ -20,8 +20,8 @@ data class MovieDetails(
         fun preview() = MovieDetails(
             id = 1,
             title = "Inception",
-            posterPath = "/poster.jpg",
-            backdropPath = "/backdrop.jpg",
+            posterUrl = "https://image.tmdb.org/t/p/w500/poster.jpg",
+            backdropUrl = "https://image.tmdb.org/t/p/w500/backdrop.jpg",
             overview = "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
             releaseDate = "2010-07-16",
             voteAverage = 8.4,
