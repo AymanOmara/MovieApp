@@ -13,10 +13,13 @@
 bin/
 gen/
 out/
+output.json
 
 # Gradle files
 .gradle/
 build/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -33,20 +36,41 @@ proguard/
 # Android Studio captures folder
 captures/
 
-# IntelliJ
+# IntelliJ / Android Studio
 *.iml
-.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches/
+.idea/modules.xml
+.idea/.name
+.idea/compiler.xml
+.idea/jarRepositories.xml
+.idea/navEditor.xml
+.idea/deploymentTargetDropDown.xml
+.idea/render.experimental.xml
+.idea/kotlinc.xml
+.idea/migrations.xml
+.idea/runConfigurations.xml
+.idea/uiDesigner.xml
+.idea/deviceStreaming.xml
+.idea/other.xml
+*.iws
 
-# Keystore files
-*.jks
-*.keystore
+# Keystore files - Uncomment if you have signed keys in the project
+# *.jks
+# *.keystore
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild/
 .cxx/
 
 # Google Services (e.g. APIs or Firebase)
-google-services.json
+# Uncomment if using Firebase and don't want to commit config
+# google-services.json
 
 # Freeline
 freeline.py
@@ -68,19 +92,48 @@ lint/intermediates/
 lint/generated/
 lint/outputs/
 lint/tmp/
+lint/reports/
 
 # Kotlin
 .kotlin/
 
 # Mac OS
 .DS_Store
+.AppleDouble
+.LSOverride
 
 # Windows
 Thumbs.db
 ehthumbs.db
+Desktop.ini
 
 # Linux
 *~
 
-# Gradle wrapper
-!gradle/wrapper/gradle-wrapper.jar
+# Android Profiling
+*.hprof
+
+# Signing files
+.signing/
+
+# Secrets/API keys
+secrets.properties
+apikey.properties
+
+# Coverage reports
+coverage/
+*.exec
+jacoco.exec
+
+# Crashlytics
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
+
+# Editor directories and files
+.vscode/
+*.swp
+*.swo
+
+# Cursor IDE
+.cursor/
