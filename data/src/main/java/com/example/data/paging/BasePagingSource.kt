@@ -5,12 +5,14 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.data.network.dto.BaseResponse
+import com.example.data.network.utils.NetworkUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class BasePagingSource<T : Any, DTO : Any>(
     private val provider: suspend (Int) -> BaseResponse<List<DTO>>,
     private val mapper: (DTO) -> T,
+    private val networkUtils: NetworkUtils,
     private val cacheReader: (suspend (Int) -> List<T>)? = null,
     private val cacheWriter: (suspend (List<T>, Int) -> Unit)? = null
 ) : PagingSource<Int, T>() {
@@ -24,10 +26,15 @@ class BasePagingSource<T : Any, DTO : Any>(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
         val page = params.key ?: 1
-        val cached = cacheReader?.let {
-            withContext(Dispatchers.IO) { it(page) }
-        } ?: emptyList()
 
+        return if (networkUtils.isNetworkAvailable()) {
+            loadFromNetwork(page)
+        } else {
+            loadFromCache(page)
+        }
+    }
+
+    private suspend fun loadFromNetwork(page: Int): LoadResult<Int, T> {
         return try {
             val response = provider(page)
             val dtos = response.results
@@ -45,22 +52,28 @@ class BasePagingSource<T : Any, DTO : Any>(
                 nextKey = nextKey
             )
         } catch (e: Exception) {
-            when (e) {
-                is IndexOutOfBoundsException -> LoadResult.Page(
-                    data = emptyList(),
-                    prevKey = null,
-                    nextKey = null
-                )
-                else -> if (cached.isNotEmpty()) {
-                    LoadResult.Page(
-                        data = cached,
-                        prevKey = if (page == 1) null else page - 1,
-                        nextKey = page + 1
-                    )
-                } else {
-                    LoadResult.Error(e)
-                }
-            }
+            loadFromCache(page, fallbackError = e)
+        }
+    }
+
+    private suspend fun loadFromCache(
+        page: Int,
+        fallbackError: Exception? = null
+    ): LoadResult<Int, T> {
+        val cached = cacheReader?.let {
+            withContext(Dispatchers.IO) { it(page) }
+        } ?: emptyList()
+
+        return if (cached.isNotEmpty()) {
+            LoadResult.Page(
+                data = cached,
+                prevKey = if (page == 1) null else page - 1,
+                nextKey = page + 1
+            )
+        } else {
+            LoadResult.Error(
+                fallbackError ?: Exception("No network connection and no cached data available")
+            )
         }
     }
 
@@ -68,6 +81,7 @@ class BasePagingSource<T : Any, DTO : Any>(
         fun <T : Any, DTO : Any> createPager(
             pageSize: Int = 20,
             prefetchDistance: Int = 1,
+            networkUtils: NetworkUtils,
             provider: suspend (Int) -> BaseResponse<List<DTO>>,
             mapper: (DTO) -> T,
             cacheReader: (suspend (Int) -> List<T>)? = null,
@@ -84,6 +98,7 @@ class BasePagingSource<T : Any, DTO : Any>(
                     BasePagingSource(
                         provider = provider,
                         mapper = mapper,
+                        networkUtils = networkUtils,
                         cacheReader = cacheReader,
                         cacheWriter = cacheWriter
                     )

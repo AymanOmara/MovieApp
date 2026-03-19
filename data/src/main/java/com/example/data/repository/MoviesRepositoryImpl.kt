@@ -36,19 +36,27 @@ class MoviesRepositoryImpl @Inject constructor(
         val cached = withContext(Dispatchers.IO) {
             popularMoviesCacheDao.getAllOnce().map { it.toMovie() }
         }
-        if (cached.isNotEmpty()) {
-            emit(Result.Success(cached))
-        }
-        try {
-            val fresh = api.getPopularMovies().results.map { it.toMovie() }
-            withContext(Dispatchers.IO) {
-                popularMoviesCacheDao.deleteAll()
-                popularMoviesCacheDao.insertAll(fresh.map { it.toPopularMovieCache() })
+
+        if (networkUtils.isNetworkAvailable()) {
+            try {
+                val fresh = api.getPopularMovies().results.map { it.toMovie() }
+                withContext(Dispatchers.IO) {
+                    popularMoviesCacheDao.deleteAll()
+                    popularMoviesCacheDao.insertAll(fresh.map { it.toPopularMovieCache() })
+                }
+                emit(Result.Success(fresh))
+            } catch (e: Exception) {
+                if (cached.isNotEmpty()) {
+                    emit(Result.Success(cached))
+                } else {
+                    emit(Result.Error(e))
+                }
             }
-            emit(Result.Success(fresh))
-        } catch (e: Exception) {
-            if (cached.isEmpty()) {
-                emit(Result.Error(e))
+        } else {
+            if (cached.isNotEmpty()) {
+                emit(Result.Success(cached))
+            } else {
+                emit(Result.Error(Exception("No network connection and no cached data available")))
             }
         }
     }
@@ -60,6 +68,7 @@ class MoviesRepositoryImpl @Inject constructor(
         return BasePagingSource.createPager(
             pageSize = 20,
             prefetchDistance = 1,
+            networkUtils = networkUtils,
             provider = { page ->
                 api.discoverMoviesByDateRange(
                     startDate = startDate,
