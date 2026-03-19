@@ -1,6 +1,9 @@
 package com.example.domain.entity
 
 import java.time.LocalDate
+import java.time.Month
+import java.time.format.TextStyle
+import java.util.Locale
 
 data class MonthRange(
     val monthLabel: String,
@@ -9,19 +12,14 @@ data class MonthRange(
 )
 
 object MonthRangeGenerator {
-    
-    private val monthNames = listOf(
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    )
 
     fun generateMonthRanges(year: Int): List<MonthRange> {
-        return (1..12).map { month ->
+        return Month.entries.map { month ->
             val startDate = LocalDate.of(year, month, 1)
             val endDate = startDate.withDayOfMonth(startDate.lengthOfMonth())
 
             MonthRange(
-                monthLabel = "${monthNames[month - 1]} $year",
+                monthLabel = "${month.getDisplayName(TextStyle.FULL, Locale.getDefault())} $year",
                 startDate = startDate.toString(),
                 endDate = endDate.toString()
             )

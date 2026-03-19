@@ -31,9 +31,6 @@ class HomeViewModel @Inject constructor(
 
     val monthSections: List<MonthPagingSection> = createMonthSections()
 
-    private val _visibleSectionCount = MutableStateFlow(0)
-    val visibleSectionCount = _visibleSectionCount.asStateFlow()
-
     init {
         loadPopularMovies()
     }
@@ -43,10 +40,6 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.LoadPopularMovies -> loadPopularMovies()
             is HomeEvent.Retry -> loadPopularMovies()
         }
-    }
-
-    fun onMonthSectionFirstPageLoaded() {
-        _visibleSectionCount.value = (_visibleSectionCount.value + 1).coerceAtMost(monthSections.size)
     }
 
     private fun createMonthSections(): List<MonthPagingSection> {
@@ -66,7 +59,6 @@ class HomeViewModel @Inject constructor(
             .catch { _ ->
                 _popularMovies.value = emptyList()
                 _isPopularLoading.value = false
-                if (_visibleSectionCount.value == 0) _visibleSectionCount.value = 1
             }
             .onEach { result ->
                 when (result) {
@@ -76,11 +68,9 @@ class HomeViewModel @Inject constructor(
                     is Result.Success -> {
                         _popularMovies.value = result.data.take(POPULAR_MOVIES_TOP_COUNT)
                         _isPopularLoading.value = false
-                        if (_visibleSectionCount.value == 0) _visibleSectionCount.value = 1
                     }
                     is Result.Error -> {
                         _isPopularLoading.value = false
-                        if (_visibleSectionCount.value == 0) _visibleSectionCount.value = 1
                     }
                 }
             }

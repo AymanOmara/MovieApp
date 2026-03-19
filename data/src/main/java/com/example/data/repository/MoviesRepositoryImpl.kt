@@ -59,7 +59,7 @@ class MoviesRepositoryImpl @Inject constructor(
     ): Flow<PagingData<Movie>> {
         return BasePagingSource.createPager(
             pageSize = 20,
-            prefetchDistance = 2,
+            prefetchDistance = 1,
             provider = { page ->
                 api.discoverMoviesByDateRange(
                     startDate = startDate,

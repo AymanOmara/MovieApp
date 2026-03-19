@@ -31,8 +31,7 @@ class BasePagingSource<T : Any, DTO : Any>(
         return try {
             val response = provider(page)
             val dtos = response.results
-            val totalPages = response.totalPages
-            val hasMore = dtos.isNotEmpty() && page < totalPages && page < 500
+            val hasMore = dtos.isNotEmpty() && page < response.totalPages
             val nextKey = if (hasMore) page + 1 else null
             val items = dtos.map { mapper(it) }
 

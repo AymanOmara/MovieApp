@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +29,6 @@ fun HomeScreen(
 ) {
     val popularMovies by viewModel.popularMovies.collectAsState()
     val isPopularLoading by viewModel.isPopularLoading.collectAsState()
-    val visibleSectionCount by viewModel.visibleSectionCount.collectAsState(initial = 0)
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -55,15 +53,12 @@ fun HomeScreen(
         }
 
         items(
-            items = viewModel.monthSections.take(visibleSectionCount),
-            key = { it.monthLabel }
+            items = viewModel.monthSections,
+            key = { section -> section.monthLabel }
         ) { section ->
-            val movies = section.pagingFlow.collectAsLazyPagingItems()
             MonthMoviesRow(
-                monthLabel = section.monthLabel,
-                movies = movies,
-                onMovieClick = onMovieClick,
-                onFirstPageLoaded = { viewModel.onMonthSectionFirstPageLoaded() }
+                section = section,
+                onMovieClick = onMovieClick
             )
         }
     }
