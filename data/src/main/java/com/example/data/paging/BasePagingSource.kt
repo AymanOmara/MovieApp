@@ -6,6 +6,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.data.network.dto.BaseResponse
 import com.example.data.network.utils.NetworkUtils
+import com.example.data.utils.PagingConstants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -79,8 +80,8 @@ class BasePagingSource<T : Any, DTO : Any>(
 
     companion object {
         fun <T : Any, DTO : Any> createPager(
-            pageSize: Int = 20,
-            prefetchDistance: Int = 1,
+            pageSize: Int = PagingConstants.PAGE_SIZE,
+            prefetchDistance: Int = PagingConstants.PREFETCH_DISTANCE,
             networkUtils: NetworkUtils,
             provider: suspend (Int) -> BaseResponse<List<DTO>>,
             mapper: (DTO) -> T,
@@ -91,8 +92,8 @@ class BasePagingSource<T : Any, DTO : Any>(
                 config = PagingConfig(
                     pageSize = pageSize,
                     prefetchDistance = prefetchDistance,
-                    enablePlaceholders = false,
-                    initialLoadSize = pageSize
+                    enablePlaceholders = PagingConstants.ENABLE_PLACEHOLDERS,
+                    initialLoadSize = PagingConstants.INITIAL_LOAD_SIZE
                 ),
                 pagingSourceFactory = {
                     BasePagingSource(

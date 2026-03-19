@@ -10,6 +10,7 @@ import com.example.data.local.toPopularMovieCache
 import com.example.data.network.MoviesWebServices
 import com.example.data.network.utils.NetworkUtils
 import com.example.data.paging.BasePagingSource
+import com.example.data.utils.PagingConstants
 import com.example.domain.entity.Cast
 import com.example.domain.entity.Movie
 import com.example.domain.entity.MovieDetails
@@ -66,8 +67,8 @@ class MoviesRepositoryImpl @Inject constructor(
         endDate: String
     ): Flow<PagingData<Movie>> {
         return BasePagingSource.createPager(
-            pageSize = 20,
-            prefetchDistance = 1,
+            pageSize = PagingConstants.PAGE_SIZE,
+            prefetchDistance = PagingConstants.PREFETCH_DISTANCE,
             networkUtils = networkUtils,
             provider = { page ->
                 api.discoverMoviesByDateRange(

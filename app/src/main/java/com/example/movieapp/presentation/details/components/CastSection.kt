@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.domain.entity.Cast
 import com.example.movieapp.R
+import com.example.movieapp.presentation.utils.PresentationConstants
 import com.example.movieapp.ui.theme.MovieAppTheme
 
 @Composable
@@ -63,7 +64,7 @@ fun CastSection(
                     contentPadding = PaddingValues(horizontal = 16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(cast.take(20)) { castMember ->
+                    items(cast.take(PresentationConstants.CAST_DISPLAY_LIMIT)) { castMember ->
                         CastCard(cast = castMember)
                     }
                 }
