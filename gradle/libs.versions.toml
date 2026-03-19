@@ -24,6 +24,7 @@ paging = "3.4.1"
 room = "2.8.4"
 mockk = "1.13.13"
 turbine = "1.2.0"
+hiddenSecrets = "0.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -78,4 +79,5 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+hidden-secrets = { id = "com.klaxit.hiddensecrets", version.ref = "hiddenSecrets" }
 
