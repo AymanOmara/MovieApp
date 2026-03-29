@@ -1,6 +1,7 @@
 package com.example.data.network.utils
 
 import com.example.domain.utils.Result
+import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -14,7 +15,7 @@ class NetworkUtilsTest {
 
     @Before
     fun setup() {
-        networkUtils = NetworkUtils()
+        networkUtils = NetworkUtils(mockk(relaxed = true))
     }
 
     @Test

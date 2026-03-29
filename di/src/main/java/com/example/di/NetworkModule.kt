@@ -2,6 +2,7 @@ package com.example.di
 
 import com.example.data.network.MoviesWebServices
 import com.example.data.network.interceptors.HeaderInterceptor
+import com.example.data.network.utils.NetworkTimeouts
 import com.example.data.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -24,24 +25,29 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideNetworkTimeouts(): NetworkTimeouts = NetworkTimeouts.default()
+
+    @Provides
+    @Singleton
     fun provideLoggingInterceptor(): HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = if (BuildConfig.DEBUG) HttpLoggingInterceptor.Level.BODY else HttpLoggingInterceptor.Level.NONE
         }
     }
 
     @Provides
     @Singleton
     fun provideOkHttpClient(
+        networkTimeouts: NetworkTimeouts,
         headerInterceptor: HeaderInterceptor,
         loggingInterceptor: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor(headerInterceptor)
             .addInterceptor(loggingInterceptor)
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(networkTimeouts.connectTimeout, TimeUnit.SECONDS)
+            .readTimeout(networkTimeouts.readTimeout, TimeUnit.SECONDS)
+            .writeTimeout(networkTimeouts.writeTimeout, TimeUnit.SECONDS)
             .build()
     }
 

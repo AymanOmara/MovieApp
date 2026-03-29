@@ -3,7 +3,8 @@ package com.example.movieapp.presentation.details.viewmodel
 import com.example.domain.entity.Cast
 import com.example.domain.entity.Movie
 import com.example.domain.entity.MovieDetails
-import com.example.domain.repository.MoviesRepository
+import com.example.domain.repository.MovieDetailsRepository
+import com.example.domain.repository.WatchlistRepository
 import com.example.domain.utils.Result
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,6 +20,8 @@ import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import android.content.Context
+import com.example.movieapp.R
 import com.example.movieapp.util.MainDispatcherRule
 
 class MovieDetailsViewModelTest {
@@ -26,13 +29,20 @@ class MovieDetailsViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var repository: MoviesRepository
+    private lateinit var movieDetailsRepository: MovieDetailsRepository
+    private lateinit var watchlistRepository: WatchlistRepository
+    private lateinit var context: Context
     private val movie = Movie.preview()
     private lateinit var viewModel: MovieDetailsViewModel
 
     @Before
     fun setup() {
-        repository = mockk()
+        movieDetailsRepository = mockk()
+        watchlistRepository = mockk()
+        context = mockk()
+        every { context.getString(R.string.error_movie_details) } returns "Failed to load movie details"
+        every { context.getString(R.string.error_cast) } returns "Failed to load cast"
+        every { context.getString(R.string.error_similar_movies) } returns "Failed to load similar movies"
     }
 
     @Test
@@ -40,11 +50,11 @@ class MovieDetailsViewModelTest {
         val details = MovieDetails.preview()
         val cast = Cast.previewList()
         val similar = Movie.previewList()
-        every { repository.getMovieDetails(movie.id) } returns flowOf(Result.Success(details))
-        every { repository.getMovieCredits(movie.id) } returns flowOf(Result.Success(cast))
-        every { repository.getSimilarMovies(movie.id) } returns flowOf(Result.Success(similar))
-        every { repository.isMovieStored(movie.id) } returns flowOf(false)
-        viewModel = MovieDetailsViewModel(repository, movie)
+        every { movieDetailsRepository.getMovieDetails(movie.id) } returns flowOf(Result.Success(details))
+        every { movieDetailsRepository.getMovieCredits(movie.id) } returns flowOf(Result.Success(cast))
+        every { movieDetailsRepository.getSimilarMovies(movie.id) } returns flowOf(Result.Success(similar))
+        every { watchlistRepository.isMovieStored(movie.id) } returns flowOf(false)
+        viewModel = MovieDetailsViewModel(movieDetailsRepository, watchlistRepository, context, movie)
         yield()
 
         val state = viewModel.uiState.value
@@ -59,11 +69,11 @@ class MovieDetailsViewModelTest {
     @Test
     fun uiState_whenDetailsLoaded_hasMovieDetails() = runTest {
         val details = MovieDetails.preview()
-        every { repository.getMovieDetails(movie.id) } returns flowOf(Result.Success(details))
-        every { repository.getMovieCredits(movie.id) } returns flowOf(Result.Success(emptyList()))
-        every { repository.getSimilarMovies(movie.id) } returns flowOf(Result.Success(emptyList()))
-        every { repository.isMovieStored(movie.id) } returns flowOf(false)
-        viewModel = MovieDetailsViewModel(repository, movie)
+        every { movieDetailsRepository.getMovieDetails(movie.id) } returns flowOf(Result.Success(details))
+        every { movieDetailsRepository.getMovieCredits(movie.id) } returns flowOf(Result.Success(emptyList()))
+        every { movieDetailsRepository.getSimilarMovies(movie.id) } returns flowOf(Result.Success(emptyList()))
+        every { watchlistRepository.isMovieStored(movie.id) } returns flowOf(false)
+        viewModel = MovieDetailsViewModel(movieDetailsRepository, watchlistRepository, context, movie)
         yield()
 
         assertEquals(details, viewModel.uiState.value.movieDetails)
@@ -72,11 +82,11 @@ class MovieDetailsViewModelTest {
 
     @Test
     fun onEvent_retryDetails_reloadsDetails() = runTest {
-        every { repository.getMovieDetails(movie.id) } returns flowOf(Result.Success(MovieDetails.preview()))
-        every { repository.getMovieCredits(movie.id) } returns flowOf(Result.Success(emptyList()))
-        every { repository.getSimilarMovies(movie.id) } returns flowOf(Result.Success(emptyList()))
-        every { repository.isMovieStored(movie.id) } returns flowOf(false)
-        viewModel = MovieDetailsViewModel(repository, movie)
+        every { movieDetailsRepository.getMovieDetails(movie.id) } returns flowOf(Result.Success(MovieDetails.preview()))
+        every { movieDetailsRepository.getMovieCredits(movie.id) } returns flowOf(Result.Success(emptyList()))
+        every { movieDetailsRepository.getSimilarMovies(movie.id) } returns flowOf(Result.Success(emptyList()))
+        every { watchlistRepository.isMovieStored(movie.id) } returns flowOf(false)
+        viewModel = MovieDetailsViewModel(movieDetailsRepository, watchlistRepository, context, movie)
         yield()
 
         viewModel.onEvent(MovieDetailsEvent.RetryDetails)
@@ -87,16 +97,16 @@ class MovieDetailsViewModelTest {
 
     @Test
     fun onEvent_toggleWatchlist_savesMovieWhenNotInWatchlist() = runTest {
-        every { repository.getMovieDetails(movie.id) } returns flowOf(Result.Success(MovieDetails.preview()))
-        every { repository.getMovieCredits(movie.id) } returns flowOf(Result.Success(emptyList()))
-        every { repository.getSimilarMovies(movie.id) } returns flowOf(Result.Success(emptyList()))
-        every { repository.isMovieStored(movie.id) } returns flowOf(false)
-        coEvery { repository.saveMovie(movie) } just Runs
-        viewModel = MovieDetailsViewModel(repository, movie)
+        every { movieDetailsRepository.getMovieDetails(movie.id) } returns flowOf(Result.Success(MovieDetails.preview()))
+        every { movieDetailsRepository.getMovieCredits(movie.id) } returns flowOf(Result.Success(emptyList()))
+        every { movieDetailsRepository.getSimilarMovies(movie.id) } returns flowOf(Result.Success(emptyList()))
+        every { watchlistRepository.isMovieStored(movie.id) } returns flowOf(false)
+        coEvery { watchlistRepository.saveMovie(movie) } just Runs
+        viewModel = MovieDetailsViewModel(movieDetailsRepository, watchlistRepository, context, movie)
         yield()
 
         viewModel.onEvent(MovieDetailsEvent.ToggleWatchlist)
         yield()
-        coVerify { repository.saveMovie(movie) }
+        coVerify { watchlistRepository.saveMovie(movie) }
     }
 }

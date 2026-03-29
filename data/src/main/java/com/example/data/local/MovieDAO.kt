@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MovieDAO {
     @Insert
-    fun insert(movie: MovieLocal)
+    suspend fun insert(movie: MovieLocal)
 
     @Delete
-    fun delete(movie: MovieLocal)
+    suspend fun delete(movie: MovieLocal)
 
     @Query("SELECT * FROM movies")
     fun getAll(): Flow<List<MovieLocal>>

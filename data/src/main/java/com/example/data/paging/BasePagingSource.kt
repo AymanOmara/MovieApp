@@ -14,6 +14,7 @@ class BasePagingSource<T : Any, DTO : Any>(
     private val provider: suspend (Int) -> BaseResponse<List<DTO>>,
     private val mapper: (DTO) -> T,
     private val networkUtils: NetworkUtils,
+    private val offlineNoCacheErrorMessage: String,
     private val cacheReader: (suspend (Int) -> List<T>)? = null,
     private val cacheWriter: (suspend (List<T>, Int) -> Unit)? = null
 ) : PagingSource<Int, T>() {
@@ -73,7 +74,7 @@ class BasePagingSource<T : Any, DTO : Any>(
             )
         } else {
             LoadResult.Error(
-                fallbackError ?: Exception("No network connection and no cached data available")
+                fallbackError ?: Exception(offlineNoCacheErrorMessage)
             )
         }
     }
@@ -83,6 +84,7 @@ class BasePagingSource<T : Any, DTO : Any>(
             pageSize: Int = PagingConstants.PAGE_SIZE,
             prefetchDistance: Int = PagingConstants.PREFETCH_DISTANCE,
             networkUtils: NetworkUtils,
+            offlineNoCacheErrorMessage: String,
             provider: suspend (Int) -> BaseResponse<List<DTO>>,
             mapper: (DTO) -> T,
             cacheReader: (suspend (Int) -> List<T>)? = null,
@@ -100,6 +102,7 @@ class BasePagingSource<T : Any, DTO : Any>(
                         provider = provider,
                         mapper = mapper,
                         networkUtils = networkUtils,
+                        offlineNoCacheErrorMessage = offlineNoCacheErrorMessage,
                         cacheReader = cacheReader,
                         cacheWriter = cacheWriter
                     )

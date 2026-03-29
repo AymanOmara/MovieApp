@@ -18,14 +18,6 @@ interface MoviesWebServices {
     ): BaseResponse<List<MovieDto>>
 
     @GET(ApiEndpoints.DISCOVER_MOVIE)
-    suspend fun discoverMovies(
-        @Query("language") language: String = "en-US",
-        @Query("primary_release_year") primaryReleaseYear: Int,
-        @Query("sort_by") sortBy: String = "release_date.asc",
-        @Query("page") page: Int = 1
-    ): BaseResponse<List<MovieDto>>
-
-    @GET(ApiEndpoints.DISCOVER_MOVIE)
     suspend fun discoverMoviesByDateRange(
         @Query("primary_release_date.gte") startDate: String,
         @Query("primary_release_date.lte") endDate: String,

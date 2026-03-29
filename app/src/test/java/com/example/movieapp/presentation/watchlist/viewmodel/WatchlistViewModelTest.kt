@@ -1,7 +1,7 @@
 package com.example.movieapp.presentation.watchlist.viewmodel
 
 import com.example.domain.entity.Movie
-import com.example.domain.repository.MoviesRepository
+import com.example.domain.repository.WatchlistRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -23,7 +23,7 @@ class WatchlistViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var repository: MoviesRepository
+    private lateinit var repository: WatchlistRepository
     private lateinit var viewModel: WatchlistViewModel
 
     @Before

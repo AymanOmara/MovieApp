@@ -3,7 +3,7 @@ package com.example.movieapp.presentation.watchlist.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.entity.Movie
-import com.example.domain.repository.MoviesRepository
+import com.example.domain.repository.WatchlistRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WatchlistViewModel @Inject constructor(
-    private val repository: MoviesRepository
+    private val repository: WatchlistRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<WatchlistUiState>(WatchlistUiState.Loading)

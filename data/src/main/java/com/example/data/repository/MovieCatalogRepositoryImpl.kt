@@ -1,36 +1,33 @@
 package com.example.data.repository
 
+import android.content.Context
 import androidx.paging.PagingData
-import com.example.data.local.MovieDAO
-import com.example.data.local.PopularMoviesCacheDao
+import com.example.data.R
 import com.example.data.local.DiscoverPageCacheDao
-import com.example.data.local.movieEntityToMovieLocal
+import com.example.data.local.PopularMoviesCacheDao
 import com.example.data.local.toDiscoverPageCacheItem
 import com.example.data.local.toPopularMovieCache
 import com.example.data.network.MoviesWebServices
 import com.example.data.network.utils.NetworkUtils
 import com.example.data.paging.BasePagingSource
 import com.example.data.utils.PagingConstants
-import com.example.domain.entity.Cast
 import com.example.domain.entity.Movie
-import com.example.domain.entity.MovieDetails
-import com.example.domain.repository.MoviesRepository
+import com.example.domain.repository.MovieCatalogRepository
 import com.example.domain.utils.Result
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
-class MoviesRepositoryImpl @Inject constructor(
+class MovieCatalogRepositoryImpl @Inject constructor(
+    @param:ApplicationContext private val context: Context,
     private val api: MoviesWebServices,
     private val networkUtils: NetworkUtils,
-    private val movieDao: MovieDAO,
     private val popularMoviesCacheDao: PopularMoviesCacheDao,
     private val discoverPageCacheDao: DiscoverPageCacheDao
-) : MoviesRepository {
+) : MovieCatalogRepository {
 
     override fun getPopularMovies(): Flow<Result<List<Movie>>> = flow {
         emit(Result.Loading)
@@ -57,7 +54,11 @@ class MoviesRepositoryImpl @Inject constructor(
             if (cached.isNotEmpty()) {
                 emit(Result.Success(cached))
             } else {
-                emit(Result.Error(Exception("No network connection and no cached data available")))
+                emit(
+                    Result.Error(
+                        Exception(context.getString(R.string.error_no_network_no_cache))
+                    )
+                )
             }
         }
     }
@@ -66,10 +67,12 @@ class MoviesRepositoryImpl @Inject constructor(
         startDate: String,
         endDate: String
     ): Flow<PagingData<Movie>> {
+        val offlineMessage = context.getString(R.string.error_no_network_no_cache)
         return BasePagingSource.createPager(
             pageSize = PagingConstants.PAGE_SIZE,
             prefetchDistance = PagingConstants.PREFETCH_DISTANCE,
             networkUtils = networkUtils,
+            offlineNoCacheErrorMessage = offlineMessage,
             provider = { page ->
                 api.discoverMoviesByDateRange(
                     startDate = startDate,
@@ -87,44 +90,5 @@ class MoviesRepositoryImpl @Inject constructor(
                 )
             }
         ).flow
-    }
-
-    override fun getMovieDetails(movieId: Int): Flow<Result<MovieDetails>> {
-        return networkUtils.safeApiCall {
-            api.getMovieDetails(movieId).toMovieDetails()
-        }
-    }
-
-    override fun getMovieCredits(movieId: Int): Flow<Result<List<Cast>>> {
-        return networkUtils.safeApiCall {
-            val response = api.getMovieCredits(movieId)
-            response.cast?.map { it.toCast() } ?: emptyList()
-        }
-    }
-
-    override fun getSimilarMovies(movieId: Int): Flow<Result<List<Movie>>> {
-        return networkUtils.safeApiCall {
-            api.getSimilarMovies(movieId).results.map { it.toMovie() }
-        }
-    }
-
-    override suspend fun saveMovie(movie: Movie) {
-        withContext(Dispatchers.IO) {
-            movieDao.insert(movie.movieEntityToMovieLocal())
-        }
-    }
-
-    override suspend fun deleteMovie(movie: Movie) {
-        withContext(Dispatchers.IO) {
-            movieDao.delete(movie.movieEntityToMovieLocal())
-        }
-    }
-
-    override fun getAllMovies(): Flow<List<Movie>> {
-        return movieDao.getAll().map { list -> list.map { it.toMovieEntity() } }
-    }
-
-    override fun isMovieStored(movieId: Int): Flow<Boolean> {
-        return movieDao.isMovieStored(movieId).map { it == 1 }
     }
 }

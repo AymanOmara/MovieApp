@@ -1,14 +1,17 @@
 package com.example.movieapp.presentation.home
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -23,6 +26,8 @@ fun PopularMoviesSection(
     movies: List<Movie>,
     isLoading: Boolean,
     onMovieClick: (Movie) -> Unit,
+    errorMessage: String? = null,
+    onRetry: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -36,6 +41,26 @@ fun PopularMoviesSection(
         when {
             isLoading -> {
                 ShimmerMovieRow()
+            }
+            errorMessage != null -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = errorMessage.ifBlank { stringResource(R.string.error_loading) },
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White
+                    )
+                    Button(
+                        onClick = onRetry,
+                        modifier = Modifier.padding(top = 8.dp)
+                    ) {
+                        Text(stringResource(R.string.retry), color = Color.White)
+                    }
+                }
             }
             movies.isEmpty() -> {
                 Text(

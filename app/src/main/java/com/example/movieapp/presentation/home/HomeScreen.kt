@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.domain.entity.Movie
 import com.example.movieapp.R
+import com.example.movieapp.presentation.home.viewmodel.HomeEvent
 import com.example.movieapp.presentation.home.viewmodel.HomeViewModel
 import com.example.movieapp.ui.theme.MovieAppTheme
 
@@ -29,6 +30,7 @@ fun HomeScreen(
 ) {
     val popularMovies by viewModel.popularMovies.collectAsState()
     val isPopularLoading by viewModel.isPopularLoading.collectAsState()
+    val popularMoviesError by viewModel.popularMoviesError.collectAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -39,7 +41,9 @@ fun HomeScreen(
             PopularMoviesSection(
                 movies = popularMovies,
                 isLoading = isPopularLoading,
-                onMovieClick = onMovieClick
+                onMovieClick = onMovieClick,
+                errorMessage = popularMoviesError,
+                onRetry = { viewModel.onEvent(HomeEvent.Retry) }
             )
         }
 

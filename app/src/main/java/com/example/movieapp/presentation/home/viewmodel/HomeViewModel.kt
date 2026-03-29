@@ -1,16 +1,20 @@
 package com.example.movieapp.presentation.home.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.domain.entity.Movie
 import com.example.domain.entity.MonthRangeGenerator
-import com.example.domain.repository.MoviesRepository
+import com.example.domain.repository.MovieCatalogRepository
 import com.example.domain.utils.Result
+import com.example.movieapp.R
 import com.example.movieapp.presentation.model.MonthPagingSection
 import com.example.movieapp.presentation.utils.PresentationConstants.MOVIES_YEAR
 import com.example.movieapp.presentation.utils.PresentationConstants.POPULAR_MOVIES_TOP_COUNT
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -20,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val moviesRepository: MoviesRepository
+    @param:ApplicationContext private val context: Context,
+    private val movieCatalogRepository: MovieCatalogRepository
 ) : ViewModel() {
 
     private val _popularMovies = MutableStateFlow<List<Movie>>(emptyList())
@@ -28,6 +33,11 @@ class HomeViewModel @Inject constructor(
 
     private val _isPopularLoading = MutableStateFlow(true)
     val isPopularLoading = _isPopularLoading.asStateFlow()
+
+    private val _popularMoviesError = MutableStateFlow<String?>(null)
+    val popularMoviesError = _popularMoviesError.asStateFlow()
+
+    private var popularMoviesCollectionJob: Job? = null
 
     val monthSections: List<MonthPagingSection> = createMonthSections()
 
@@ -37,7 +47,6 @@ class HomeViewModel @Inject constructor(
 
     fun onEvent(event: HomeEvent) {
         when (event) {
-            is HomeEvent.LoadPopularMovies -> loadPopularMovies()
             is HomeEvent.Retry -> loadPopularMovies()
         }
     }
@@ -47,7 +56,7 @@ class HomeViewModel @Inject constructor(
         return monthRanges.map { monthRange ->
             MonthPagingSection(
                 monthLabel = monthRange.monthLabel,
-                pagingFlow = moviesRepository
+                pagingFlow = movieCatalogRepository
                     .getMoviesByDateRangePager(monthRange.startDate, monthRange.endDate)
                     .cachedIn(viewModelScope)
             )
@@ -55,22 +64,31 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun loadPopularMovies() {
-        moviesRepository.getPopularMovies()
-            .catch { _ ->
+        val fallbackMessage = context.getString(R.string.error_generic)
+        popularMoviesCollectionJob?.cancel()
+        popularMoviesCollectionJob = movieCatalogRepository.getPopularMovies()
+            .catch { e ->
                 _popularMovies.value = emptyList()
                 _isPopularLoading.value = false
+                _popularMoviesError.value = e.message?.takeIf { it.isNotBlank() }
+                    ?: fallbackMessage
             }
             .onEach { result ->
                 when (result) {
                     is Result.Loading -> {
                         _isPopularLoading.value = true
+                        _popularMoviesError.value = null
                     }
                     is Result.Success -> {
                         _popularMovies.value = result.data.take(POPULAR_MOVIES_TOP_COUNT)
                         _isPopularLoading.value = false
+                        _popularMoviesError.value = null
                     }
                     is Result.Error -> {
+                        _popularMovies.value = emptyList()
                         _isPopularLoading.value = false
+                        _popularMoviesError.value = result.error.message?.takeIf { it.isNotBlank() }
+                            ?: fallbackMessage
                     }
                 }
             }

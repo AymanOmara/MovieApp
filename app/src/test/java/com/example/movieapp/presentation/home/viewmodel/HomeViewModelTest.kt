@@ -1,7 +1,7 @@
 package com.example.movieapp.presentation.home.viewmodel
 
 import com.example.domain.entity.Movie
-import com.example.domain.repository.MoviesRepository
+import com.example.domain.repository.MovieCatalogRepository
 import com.example.domain.utils.Result
 import io.mockk.every
 import io.mockk.mockk
@@ -13,6 +13,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import androidx.paging.PagingData
+import android.content.Context
+import com.example.movieapp.R
 import com.example.movieapp.util.MainDispatcherRule
 
 class HomeViewModelTest {
@@ -20,11 +22,14 @@ class HomeViewModelTest {
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private lateinit var repository: MoviesRepository
+    private lateinit var context: Context
+    private lateinit var repository: MovieCatalogRepository
     private lateinit var viewModel: HomeViewModel
 
     @Before
     fun setup() {
+        context = mockk()
+        every { context.getString(R.string.error_generic) } returns "Something went wrong. Please try again."
         repository = mockk()
         every { repository.getMoviesByDateRangePager(any(), any()) } returns flowOf(PagingData.from(emptyList()))
     }
@@ -36,23 +41,26 @@ class HomeViewModelTest {
             Result.Loading,
             Result.Success(movies)
         )
-        viewModel = HomeViewModel(repository)
+        viewModel = HomeViewModel(context, repository)
         yield()
 
         assertEquals(movies, viewModel.popularMovies.value)
         assert(!viewModel.isPopularLoading.value)
+        assertEquals(null, viewModel.popularMoviesError.value)
     }
 
     @Test
-    fun init_onError_setsVisibleSectionCountToOne() = runTest {
+    fun init_onError_stopsLoadingAndKeepsEmptyList() = runTest {
         every { repository.getPopularMovies() } returns flowOf(
             Result.Loading,
             Result.Error(RuntimeException("error"))
         )
-        viewModel = HomeViewModel(repository)
+        viewModel = HomeViewModel(context, repository)
         yield()
 
-        assertEquals(1, viewModel.visibleSectionCount.value)
+        assertEquals(emptyList<Movie>(), viewModel.popularMovies.value)
+        assert(!viewModel.isPopularLoading.value)
+        assertEquals("error", viewModel.popularMoviesError.value)
     }
 
     @Test
@@ -62,7 +70,7 @@ class HomeViewModelTest {
             Result.Loading,
             Result.Success(movies)
         )
-        viewModel = HomeViewModel(repository)
+        viewModel = HomeViewModel(context, repository)
         yield()
         assertEquals(movies, viewModel.popularMovies.value)
 
@@ -70,25 +78,13 @@ class HomeViewModelTest {
         viewModel.onEvent(HomeEvent.Retry)
         yield()
         assertEquals(emptyList<Movie>(), viewModel.popularMovies.value)
-    }
-
-    @Test
-    fun onMonthSectionFirstPageLoaded_incrementsVisibleSectionCount() = runTest {
-        every { repository.getPopularMovies() } returns flowOf(Result.Loading, Result.Success(emptyList()))
-        viewModel = HomeViewModel(repository)
-        yield()
-
-        assertEquals(1, viewModel.visibleSectionCount.value)
-        viewModel.onMonthSectionFirstPageLoaded()
-        assertEquals(2, viewModel.visibleSectionCount.value)
-        viewModel.onMonthSectionFirstPageLoaded()
-        assertEquals(3, viewModel.visibleSectionCount.value)
+        assertEquals(null, viewModel.popularMoviesError.value)
     }
 
     @Test
     fun monthSections_has12Items() = runTest {
         every { repository.getPopularMovies() } returns flowOf(Result.Success(emptyList()))
-        viewModel = HomeViewModel(repository)
+        viewModel = HomeViewModel(context, repository)
         assertEquals(12, viewModel.monthSections.size)
     }
 }

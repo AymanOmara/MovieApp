@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_no_network_no_cache">No network connection and no cached data available</string>
+</resources>

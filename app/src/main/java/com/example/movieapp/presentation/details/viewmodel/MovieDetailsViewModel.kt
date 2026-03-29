@@ -1,14 +1,18 @@
 package com.example.movieapp.presentation.details.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.entity.Movie
-import com.example.domain.repository.MoviesRepository
+import com.example.domain.repository.MovieDetailsRepository
+import com.example.domain.repository.WatchlistRepository
 import com.example.domain.utils.Result
+import com.example.movieapp.R
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +24,9 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = MovieDetailsViewModel.Factory::class)
 class MovieDetailsViewModel @AssistedInject constructor(
-    private val moviesRepository: MoviesRepository,
+    private val movieDetailsRepository: MovieDetailsRepository,
+    private val watchlistRepository: WatchlistRepository,
+    @param:ApplicationContext private val context: Context,
     @Assisted private val movie: Movie
 ) : ViewModel() {
 
@@ -38,7 +44,7 @@ class MovieDetailsViewModel @AssistedInject constructor(
     }
 
     private fun observeWatchlistState() {
-        moviesRepository.isMovieStored(movie.id)
+        watchlistRepository.isMovieStored(movie.id)
             .onEach { inWatchlist ->
                 _uiState.update { it.copy(isInWatchlist = inWatchlist) }
             }
@@ -54,7 +60,7 @@ class MovieDetailsViewModel @AssistedInject constructor(
 
     private fun loadMovieDetails() {
         viewModelScope.launch {
-            moviesRepository.getMovieDetails(movie.id).collect { result ->
+            movieDetailsRepository.getMovieDetails(movie.id).collect { result ->
                 when (result) {
                     is Result.Loading -> {
                         _uiState.update { it.copy(isDetailsLoading = true, detailsError = null) }
@@ -72,7 +78,8 @@ class MovieDetailsViewModel @AssistedInject constructor(
                         _uiState.update {
                             it.copy(
                                 isDetailsLoading = false,
-                                detailsError = result.error.message ?: "Failed to load movie details"
+                                detailsError = result.error.message?.takeIf { it.isNotBlank() }
+                                    ?: context.getString(R.string.error_movie_details)
                             )
                         }
                     }
@@ -83,7 +90,7 @@ class MovieDetailsViewModel @AssistedInject constructor(
 
     private fun loadMovieCast() {
         viewModelScope.launch {
-            moviesRepository.getMovieCredits(movie.id).collect { result ->
+            movieDetailsRepository.getMovieCredits(movie.id).collect { result ->
                 when (result) {
                     is Result.Loading -> {
                         _uiState.update { it.copy(isCastLoading = true, castError = null) }
@@ -101,7 +108,8 @@ class MovieDetailsViewModel @AssistedInject constructor(
                         _uiState.update {
                             it.copy(
                                 isCastLoading = false,
-                                castError = result.error.message ?: "Failed to load cast"
+                                castError = result.error.message?.takeIf { it.isNotBlank() }
+                                    ?: context.getString(R.string.error_cast)
                             )
                         }
                     }
@@ -112,7 +120,7 @@ class MovieDetailsViewModel @AssistedInject constructor(
 
     private fun loadSimilarMovies() {
         viewModelScope.launch {
-            moviesRepository.getSimilarMovies(movie.id).collect { result ->
+            movieDetailsRepository.getSimilarMovies(movie.id).collect { result ->
                 when (result) {
                     is Result.Loading -> {
                         _uiState.update { it.copy(isSimilarLoading = true, similarError = null) }
@@ -130,7 +138,8 @@ class MovieDetailsViewModel @AssistedInject constructor(
                         _uiState.update {
                             it.copy(
                                 isSimilarLoading = false,
-                                similarError = result.error.message ?: "Failed to load similar movies"
+                                similarError = result.error.message?.takeIf { it.isNotBlank() }
+                                    ?: context.getString(R.string.error_similar_movies)
                             )
                         }
                     }
@@ -148,24 +157,12 @@ class MovieDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    fun retryDetails() {
-        loadMovieDetails()
-    }
-
-    fun retryCast() {
-        loadMovieCast()
-    }
-
-    fun retrySimilar() {
-        loadSimilarMovies()
-    }
-
     private fun toggleWatchlist() {
         viewModelScope.launch(Dispatchers.IO) {
             if (_uiState.value.isInWatchlist) {
-                moviesRepository.deleteMovie(movie)
+                watchlistRepository.deleteMovie(movie)
             } else {
-                moviesRepository.saveMovie(movie)
+                watchlistRepository.saveMovie(movie)
             }
         }
     }

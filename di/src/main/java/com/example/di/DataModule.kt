@@ -8,8 +8,7 @@ import com.example.data.local.MIGRATION_2_3
 import com.example.data.local.MovieDAO
 import com.example.data.local.PopularMoviesCacheDao
 import com.example.data.local.DiscoverPageCacheDao
-import com.example.data.repository.MoviesRepositoryImpl
-import com.example.domain.repository.MoviesRepository
+import com.example.data.utils.DatabaseConstants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,11 +19,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
-
-    @Provides
-    @Singleton
-    fun bindMoviesRepository(impl: MoviesRepositoryImpl): MoviesRepository = impl
-
     @Provides
     @Singleton
     fun provideDatabase(
@@ -33,7 +27,7 @@ object DataModule {
         return Room.databaseBuilder(
             context,
             AppDatabase::class.java,
-            "movie_db"
+            DatabaseConstants.MOVIE_DB_NAME
         ).addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
     }
 
