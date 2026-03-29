@@ -9,6 +9,7 @@ import com.example.data.network.dto.MovieDto
 import android.content.Context
 import com.example.data.R
 import com.example.data.network.utils.NetworkUtils
+import com.example.domain.utils.AppFailure
 import com.example.domain.utils.Result
 import io.mockk.coEvery
 import io.mockk.every
@@ -75,7 +76,9 @@ class MovieCatalogRepositoryImplTest {
 
         repository.getPopularMovies().test {
             assertTrue(awaitItem() is Result.Loading)
-            assertTrue(awaitItem() is Result.Error)
+            val item = awaitItem() as Result.Error
+            assertTrue(item.failure is AppFailure.Unknown)
+            assertEquals("Network error", (item.failure as AppFailure.Unknown).cause?.message)
             awaitComplete()
         }
     }

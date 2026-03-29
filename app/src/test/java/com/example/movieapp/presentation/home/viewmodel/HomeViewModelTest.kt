@@ -2,6 +2,7 @@ package com.example.movieapp.presentation.home.viewmodel
 
 import com.example.domain.entity.Movie
 import com.example.domain.repository.MovieCatalogRepository
+import com.example.domain.utils.AppFailure
 import com.example.domain.utils.Result
 import io.mockk.every
 import io.mockk.mockk
@@ -53,7 +54,7 @@ class HomeViewModelTest {
     fun init_onError_stopsLoadingAndKeepsEmptyList() = runTest {
         every { repository.getPopularMovies() } returns flowOf(
             Result.Loading,
-            Result.Error(RuntimeException("error"))
+            Result.Error(AppFailure.Unknown(RuntimeException("error")))
         )
         viewModel = HomeViewModel(context, repository)
         yield()

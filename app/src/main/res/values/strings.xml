@@ -45,4 +45,5 @@
     <string name="error_similar_movies">Failed to load similar movies</string>
     <string name="error_generic">Something went wrong. Please try again.</string>
     <string name="error_connection">Unable to connect to the server. Please check your internet connection and try again.</string>
+    <string name="error_no_network_no_cache">No network connection and no cached data available</string>
 </resources>

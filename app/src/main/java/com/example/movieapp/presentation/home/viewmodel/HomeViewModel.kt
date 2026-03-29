@@ -12,6 +12,7 @@ import com.example.movieapp.R
 import com.example.movieapp.presentation.model.MonthPagingSection
 import com.example.movieapp.presentation.utils.PresentationConstants.MOVIES_YEAR
 import com.example.movieapp.presentation.utils.PresentationConstants.POPULAR_MOVIES_TOP_COUNT
+import com.example.movieapp.presentation.utils.userMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
@@ -87,8 +88,10 @@ class HomeViewModel @Inject constructor(
                     is Result.Error -> {
                         _popularMovies.value = emptyList()
                         _isPopularLoading.value = false
-                        _popularMoviesError.value = result.error.message?.takeIf { it.isNotBlank() }
-                            ?: fallbackMessage
+                        _popularMoviesError.value = result.failure.userMessage(
+                            context,
+                            R.string.error_generic
+                        )
                     }
                 }
             }

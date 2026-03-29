@@ -31,7 +31,7 @@ class NetworkUtils @Inject constructor(
             val result = apiCall()
             emit(Result.Success(result))
         } catch (e: Exception) {
-            emit(Result.Error(e))
+            emit(Result.Error(e.toAppFailure()))
         }
     }
 }

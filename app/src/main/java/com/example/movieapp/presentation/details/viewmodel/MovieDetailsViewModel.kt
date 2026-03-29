@@ -8,6 +8,7 @@ import com.example.domain.repository.MovieDetailsRepository
 import com.example.domain.repository.WatchlistRepository
 import com.example.domain.utils.Result
 import com.example.movieapp.R
+import com.example.movieapp.presentation.utils.userMessage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -78,8 +79,10 @@ class MovieDetailsViewModel @AssistedInject constructor(
                         _uiState.update {
                             it.copy(
                                 isDetailsLoading = false,
-                                detailsError = result.error.message?.takeIf { it.isNotBlank() }
-                                    ?: context.getString(R.string.error_movie_details)
+                                detailsError = result.failure.userMessage(
+                                    context,
+                                    R.string.error_movie_details
+                                )
                             )
                         }
                     }
@@ -108,8 +111,10 @@ class MovieDetailsViewModel @AssistedInject constructor(
                         _uiState.update {
                             it.copy(
                                 isCastLoading = false,
-                                castError = result.error.message?.takeIf { it.isNotBlank() }
-                                    ?: context.getString(R.string.error_cast)
+                                castError = result.failure.userMessage(
+                                    context,
+                                    R.string.error_cast
+                                )
                             )
                         }
                     }
@@ -138,8 +143,10 @@ class MovieDetailsViewModel @AssistedInject constructor(
                         _uiState.update {
                             it.copy(
                                 isSimilarLoading = false,
-                                similarError = result.error.message?.takeIf { it.isNotBlank() }
-                                    ?: context.getString(R.string.error_similar_movies)
+                                similarError = result.failure.userMessage(
+                                    context,
+                                    R.string.error_similar_movies
+                                )
                             )
                         }
                     }

@@ -1,7 +1,6 @@
 package com.example.domain.utils
 
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -15,10 +14,11 @@ class ResultTest {
     }
 
     @Test
-    fun error_holdsThrowable() {
+    fun error_holdsFailure() {
         val throwable = RuntimeException("error")
-        val result = Result.Error(throwable)
-        assertEquals(throwable, result.error)
+        val failure = AppFailure.Unknown(throwable)
+        val result = Result.Error(failure)
+        assertEquals(failure, result.failure)
     }
 
     @Test

@@ -9,10 +9,12 @@ import com.example.data.local.toDiscoverPageCacheItem
 import com.example.data.local.toPopularMovieCache
 import com.example.data.network.MoviesWebServices
 import com.example.data.network.utils.NetworkUtils
+import com.example.data.network.utils.toAppFailure
 import com.example.data.paging.BasePagingSource
 import com.example.data.utils.PagingConstants
 import com.example.domain.entity.Movie
 import com.example.domain.repository.MovieCatalogRepository
+import com.example.domain.utils.AppFailure
 import com.example.domain.utils.Result
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -47,18 +49,14 @@ class MovieCatalogRepositoryImpl @Inject constructor(
                 if (cached.isNotEmpty()) {
                     emit(Result.Success(cached))
                 } else {
-                    emit(Result.Error(e))
+                    emit(Result.Error(e.toAppFailure()))
                 }
             }
         } else {
             if (cached.isNotEmpty()) {
                 emit(Result.Success(cached))
             } else {
-                emit(
-                    Result.Error(
-                        Exception(context.getString(R.string.error_no_network_no_cache))
-                    )
-                )
+                emit(Result.Error(AppFailure.CacheEmpty))
             }
         }
     }

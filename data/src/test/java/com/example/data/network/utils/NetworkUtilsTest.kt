@@ -1,5 +1,6 @@
 package com.example.data.network.utils
 
+import com.example.domain.utils.AppFailure
 import com.example.domain.utils.Result
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
@@ -37,7 +38,9 @@ class NetworkUtilsTest {
         assertEquals(2, results.size)
         assertTrue(results[0] is Result.Loading)
         assertTrue(results[1] is Result.Error)
-        assertEquals(exception, (results[1] as Result.Error).error)
+        val failure = (results[1] as Result.Error).failure
+        assertTrue(failure is AppFailure.Unknown)
+        assertEquals(exception, (failure as AppFailure.Unknown).cause)
     }
 
     @Test
