@@ -5,8 +5,6 @@ data class Genre(
     val name: String
 ) {
     companion object {
-        fun preview() = Genre(id = 1, name = "Action")
-
         fun previewList() = listOf(
             Genre(1, "Action"),
             Genre(2, "Sci-Fi"),

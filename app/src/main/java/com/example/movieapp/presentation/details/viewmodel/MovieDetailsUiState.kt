@@ -18,10 +18,4 @@ data class MovieDetailsUiState(
     val similarMovies: List<Movie> = emptyList(),
     val isSimilarLoading: Boolean = true,
     val similarError: String? = null
-) {
-    val isFullyLoaded: Boolean
-        get() = !isDetailsLoading && !isCastLoading && !isSimilarLoading
-
-    val hasAnyData: Boolean
-        get() = movieDetails != null || cast.isNotEmpty() || similarMovies.isNotEmpty()
-}
+)
